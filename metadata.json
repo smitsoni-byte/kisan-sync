@@ -1,0 +1,6 @@
+{
+  "name": "KisanSync",
+  "description": "AI-powered crop disease detection and transparent agricultural bidding marketplace for modern farmers.",
+  "requestFramePermissions": ["camera", "microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

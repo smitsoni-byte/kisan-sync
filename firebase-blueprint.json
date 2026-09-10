@@ -1,0 +1,145 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile containing registration and KYC details",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 128 },
+        "role": { "type": "string", "enum": ["Farmer", "Trader", "Buyer", "Admin"] },
+        "phone": { "type": "string", "maxLength": 32 },
+        "email": { "type": "string", "maxLength": 128 },
+        "location": { "type": "string", "maxLength": 128 },
+        "rating": { "type": "number" },
+        "status": { "type": "string", "enum": ["Active", "Blocked"] },
+        "isBlocked": { "type": "boolean" },
+        "blockReason": { "type": "string", "maxLength": 512 }
+      },
+      "required": ["id", "name", "role", "phone", "location"]
+    },
+    "UserLoginRecord": {
+      "title": "UserLoginRecord",
+      "description": "Audit record of each user authentication event",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "userName": { "type": "string", "maxLength": 128 },
+        "userEmail": { "type": "string", "maxLength": 128 },
+        "userPhone": { "type": "string", "maxLength": 32 },
+        "role": { "type": "string", "maxLength": 64 },
+        "location": { "type": "string", "maxLength": 128 },
+        "loginMethod": { "type": "string", "maxLength": 64 },
+        "timestamp": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["id", "userId", "userName", "role", "timestamp"]
+    },
+    "CropScanRecord": {
+      "title": "CropScanRecord",
+      "description": "Farmer crop diagnostic scan record capturing disease, symptoms, and treatments",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "farmerId": { "type": "string", "maxLength": 128 },
+        "farmerName": { "type": "string", "maxLength": 128 },
+        "cropType": { "type": "string", "maxLength": 128 },
+        "healthStatus": { "type": "string", "maxLength": 64 },
+        "diseaseDetected": { "type": "string", "maxLength": 128 },
+        "confidenceScore": { "type": "number" },
+        "qualityGrade": { "type": "string", "maxLength": 16 },
+        "severity": { "type": "string", "maxLength": 64 },
+        "summaryAdvice": { "type": "string", "maxLength": 1024 },
+        "timestamp": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["id", "farmerName", "cropType", "healthStatus", "timestamp"]
+    },
+    "CropListing": {
+      "title": "CropListing",
+      "description": "Mandi crop lot auction listing",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "farmerName": { "type": "string", "maxLength": 128 },
+        "farmerLocation": { "type": "string", "maxLength": 128 },
+        "cropName": { "type": "string", "maxLength": 128 },
+        "variety": { "type": "string", "maxLength": 128 },
+        "category": { "type": "string", "maxLength": 64 },
+        "quantityQuintals": { "type": "number" },
+        "startingPricePerQuintal": { "type": "number" },
+        "currentHighestBid": { "type": "number" },
+        "bidCount": { "type": "number" }
+      },
+      "required": ["id", "farmerName", "cropName", "quantityQuintals", "startingPricePerQuintal"]
+    },
+    "MarketplaceOrder": {
+      "title": "MarketplaceOrder",
+      "description": "Finalized crop trade or purchase order between buyer and farmer",
+      "type": "object",
+      "properties": {
+        "orderId": { "type": "string", "maxLength": 128 },
+        "listingId": { "type": "string", "maxLength": 128 },
+        "cropName": { "type": "string", "maxLength": 128 },
+        "variety": { "type": "string", "maxLength": 128 },
+        "farmerSellerName": { "type": "string", "maxLength": 128 },
+        "farmerSellerAddress": { "type": "string", "maxLength": 256 },
+        "buyerName": { "type": "string", "maxLength": 128 },
+        "buyerAddress": { "type": "string", "maxLength": 256 },
+        "buyerPhone": { "type": "string", "maxLength": 32 },
+        "pricePerQuintal": { "type": "number" },
+        "quantitySoldQuintals": { "type": "number" },
+        "totalPrice": { "type": "number" },
+        "status": { "type": "string", "maxLength": 64 },
+        "timestamp": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["orderId", "listingId", "cropName", "farmerSellerName", "farmerSellerAddress", "buyerName", "buyerAddress", "pricePerQuintal", "quantitySoldQuintals", "totalPrice", "timestamp"]
+    },
+    "ActivityItem": {
+      "title": "ActivityItem",
+      "description": "Marketplace activity, bidding, and auction audit log",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "type": { "type": "string", "enum": ["bid", "analysis", "listing", "payout"] },
+        "title": { "type": "string", "maxLength": 256 },
+        "description": { "type": "string", "maxLength": 1024 },
+        "timestamp": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["id", "type", "title", "description", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "Registered user accounts and profiles"
+    },
+    "/user_logins/{loginId}": {
+      "schema": "UserLoginRecord",
+      "description": "Historical log of every user login event"
+    },
+    "/farmer_logins/{loginId}": {
+      "schema": "UserLoginRecord",
+      "description": "Dedicated log of farmer login sessions"
+    },
+    "/buyer_logins/{loginId}": {
+      "schema": "UserLoginRecord",
+      "description": "Dedicated log of buyer/trader login sessions"
+    },
+    "/crop_scans/{scanId}": {
+      "schema": "CropScanRecord",
+      "description": "Farmer crop diagnostic scans and treatment records"
+    },
+    "/listings/{listingId}": {
+      "schema": "CropListing",
+      "description": "Active and completed crop auctions"
+    },
+    "/marketplace_orders/{orderId}": {
+      "schema": "MarketplaceOrder",
+      "description": "Marketplace trade orders capturing buyer, seller, price, stock sold, and address"
+    },
+    "/activities/{activityId}": {
+      "schema": "ActivityItem",
+      "description": "System activity logs and transactions"
+    }
+  }
+}
